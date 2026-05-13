@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Kelas XI-4</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: white;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(to right, #ff0050, #ffbd59, #ff0050);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .top {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            width: 200px;
+            background: #1b1b1b;
+            border-radius: 20px;
+            overflow: hidden;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.03);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .info {
+            padding: 15px;
+        }
+
+        .jabatan {
+            font-size: 13px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nama {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            background: linear-gradient(to right, #ff0050, #ffbd59, #ff0050);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        .murid-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>STRUKTUR KELAS XI-4</h1>
+        <a href="index.html"
+ style="color: #ff0050; text-decoration: none; font-weight: bold; display: block; text-align: center; margin-bottom: 20px;">Kembali
+            ke Beranda</a>
+    </div>
+
+
+    <div class="container">
+
+        <div class="top">
+            <div class="card">
+                <img src="img/walas.jpg">
+                <div class="info">
+                    <div class="jabatan">Wali Kelas</div>
+                    <div class="nama">Eka Ajeng S.Pd</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top">
+            <div class="card">
+                <img src="img/ketua.jpg">
+                <div class="info">
+                    <div class="jabatan">Ketua Kelas (Siswa 01)</div>
+                    <div class="nama">Nama Ketua Kelas</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="img/sekre.jpg">
+                <div class="info">
+                    <div class="jabatan">Sekretaris (Siswa 02)</div>
+                    <div class="nama">Nama Sekretaris</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="img/bendahara.jpg">
+                <div class="info">
+                    <div class="jabatan">Bendahara (Siswa 03)</div>
+                    <div class="nama">Nama Bendahara</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="murid-grid">
+            <div class="card"><img src="img/4.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 04</div>
+                    <div class="nama">Nama Murid 4</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/5.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 05</div>
+                    <div class="nama">Nama Murid 5</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/6.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 06</div>
+                    <div class="nama">Nama Murid 6</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/7.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 07</div>
+                    <div class="nama">Nama Murid 7</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/8.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 08</div>
+                    <div class="nama">Nama Murid 8</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/9.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 09</div>
+                    <div class="nama">Nama Murid 9</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/10.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 10</div>
+                    <div class="nama">Nama Murid 10</div>
+                </div>
+            </div>
+
+            <div class="card"><img src="img/11.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 11</div>
+                    <div class="nama">Nama Murid 11</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/12.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 12</div>
+                    <div class="nama">Nama Murid 12</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/13.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 13</div>
+                    <div class="nama">Nama Murid 13</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/14.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 14</div>
+                    <div class="nama">Nama Murid 14</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/15.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 15</div>
+                    <div class="nama">Nama Murid 15</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/16.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 16</div>
+                    <div class="nama">Nama Murid 16</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/17.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 17</div>
+                    <div class="nama">Nama Murid 17</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/18.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 18</div>
+                    <div class="nama">Nama Murid 18</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/19.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 19</div>
+                    <div class="nama">Nama Murid 19</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/20.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 20</div>
+                    <div class="nama">Nama Murid 20</div>
+                </div>
+            </div>
+
+            <div class="card"><img src="img/21.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 21</div>
+                    <div class="nama">Nama Murid 21</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/22.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 22</div>
+                    <div class="nama">Nama Murid 22</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/23.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 23</div>
+                    <div class="nama">Nama Murid 23</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/24.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 24</div>
+                    <div class="nama">Nama Murid 24</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/25.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 25</div>
+                    <div class="nama">Nama Murid 25</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/26.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 26</div>
+                    <div class="nama">Nama Murid 26</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/27.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 27</div>
+                    <div class="nama">Nama Murid 27</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/28.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 28</div>
+                    <div class="nama">Nama Murid 28</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/29.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 29</div>
+                    <div class="nama">Nama Murid 29</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/30.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 30</div>
+                    <div class="nama">Nama Murid 30</div>
+                </div>
+            </div>
+
+            <div class="card"><img src="img/31.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 31</div>
+                    <div class="nama">Nama Murid 31</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/32.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 32</div>
+                    <div class="nama">Nama Murid 32</div>
+                </div>
+            </div>
+            <div class="card"><img src="img/33.jpg">
+                <div class="info">
+                    <div class="jabatan">Siswa 33</div>
+                    <div class="nama">Nama Murid 33</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
