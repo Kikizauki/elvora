@@ -73,7 +73,6 @@
             to { background-position: 200% center; }
         }
 
-        /* --- PERBAIKAN BORDER VIDEO --- */
         #header-video {
             width: clamp(90px, 18vw, 130px);
             height: clamp(90px, 18vw, 130px);
@@ -119,7 +118,6 @@
         .page { display: none; padding: 40px 5%; position: relative; z-index: 5; }
         .page.active { display: block; }
 
-        /* --- STYLING AREA UPLOAD --- */
         #dropArea {
             border: 2px dashed #ff0050;
             padding: 40px;
@@ -143,7 +141,6 @@
         }
         .card:hover { transform: translateY(-10px); box-shadow: 0 10px 20px rgba(255, 0, 80, 0.3); }
 
-        /* Zoom Card styles tetap sama */
         .card.active {
             position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
             width: 90vw; max-width: 600px; max-height: 85vh; overflow-y: auto; z-index: 999999 !important;
@@ -157,6 +154,22 @@
         .close-zoom { display: none; position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; background: #ff0050; color: white; border-radius: 50%; text-align: center; line-height: 30px; cursor: pointer; }
         .overlay-bg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999998; }
         .card.active .close-zoom { display: block; }
+
+        /* --- STYLING TOMBOL HAPUS --- */
+        .btn-delete {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(255, 68, 68, 0.8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .btn-delete:hover { background: #ff4444; }
 
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: flex-start; }
@@ -209,7 +222,7 @@
             <h2>Login XI-4</h2>
             <input type="text" id="user" placeholder="Username" style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#111; color:white; border:1px solid #333;">
             <input type="password" id="pass" placeholder="Password" style="width:100%; margin-bottom:10px; padding:12px; border-radius:8px; background:#111; color:white; border:1px solid #333;">
-            <p id="error-msg" style="color: #ff4444; font-size: 12px; display: none;"></p>
+            <p id="error-msg" style="color: #ff4444; font-size: 13px; margin-top: -5px; margin-bottom: 10px; display: none; font-weight: bold;">⚠️ Username atau Sandi Salah!</p>
             <button onclick="login()" style="width:100%; padding:12px; background:#ff0050; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">MASUK</button>
         </div>
     </div>
@@ -217,22 +230,18 @@
     <div id="upload-page" class="page">
         <h2>Upload Momen</h2>
         <div style="max-width: 500px; background: #222; padding: 25px; border-radius: 15px; border: 1px solid #444;">
-            
             <div id="dropArea">
                 <h3>Drag & Drop Momen</h3>
                 <p>Klik atau geser foto/video ke sini</p>
                 <input type="file" id="media-file" accept="image/*,video/*" style="display: none;">
                 <div id="preview"></div>
             </div>
-
             <textarea id="media-desc" rows="4" style="width:100%; background:#333; color:white; padding:10px; border-radius:8px; margin-bottom:15px;" placeholder="Tulis kenangan..."></textarea>
-            
             <button id="btn-post" onclick="processUpload()" style="background:#00c851; color:white; padding:12px; border:none; border-radius:8px; width:100%; font-weight:bold; cursor:pointer;">POSTING SEKARANG</button>
         </div>
     </div>
 
     <script>
-        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyAQqcXjVEa0K2oNJXcqTl9lCh8lT1ufBwY",
             authDomain: "elvor4.firebaseapp.com",
@@ -245,11 +254,10 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // NAVIGASI
         function showPage(id) {
             if (id === 'upload' && !localStorage.getItem("auth_elvor")) {
-                alert("Login dulu bos!");
-                id = 'login';
+                showPage('login');
+                return;
             }
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id + '-page').classList.add('active');
@@ -265,11 +273,14 @@
         function login() {
             const u = document.getElementById('user').value;
             const p = document.getElementById('pass').value;
+            const errorMsg = document.getElementById('error-msg');
+
             if (u === 'xi4' && p === '123') {
+                errorMsg.style.display = "none";
                 localStorage.setItem("auth_elvor", "active");
                 showPage('home');
             } else {
-                alert("Salah!");
+                errorMsg.style.display = "block";
             }
         }
 
@@ -278,12 +289,10 @@
             location.reload();
         }
 
-        // DRAG & DROP LOGIC
         const dropArea = document.getElementById("dropArea");
         const fileInput = document.getElementById("media-file");
 
         dropArea.onclick = () => fileInput.click();
-
         dropArea.ondragover = (e) => { e.preventDefault(); dropArea.classList.add("drag"); };
         dropArea.ondragleave = () => dropArea.classList.remove("drag");
         dropArea.ondrop = (e) => {
@@ -311,12 +320,10 @@
             }
         }
 
-        // UPLOAD KE FIREBASE
         function processUpload() {
             const file = fileInput.files[0];
             const desc = document.getElementById('media-desc').value;
             const btn = document.getElementById('btn-post');
-
             if (!file || !desc) return alert("Lengkapi data!");
 
             const reader = new FileReader();
@@ -331,16 +338,24 @@
                     type: file.type.startsWith('video') ? 'video' : 'image',
                     desc: desc
                 }).then(() => {
-                    alert("Berhasil!");
                     location.reload();
                 });
             };
             reader.readAsDataURL(file);
         }
 
-        // LOAD DATA
+        function deleteItem(id, event) {
+            event.stopPropagation();
+            if (confirm("Hapus kenangan ini?")) {
+                database.ref('memories/' + id).remove().then(() => {
+                    alert("Terhapus!");
+                });
+            }
+        }
+
         function loadOnlineData() {
             const container = document.getElementById('gallery-container');
+            const isAuth = localStorage.getItem("auth_elvor");
             database.ref('memories').on('value', (snapshot) => {
                 container.innerHTML = "";
                 snapshot.forEach((child) => {
@@ -353,14 +368,16 @@
                         ? `<img src="${item.data}" onload="this.parentElement.classList.add('loaded')">`
                         : `<video src="${item.data}" onloadeddata="this.parentElement.classList.add('loaded')" controls></video>`;
 
-                    card.innerHTML = `<div class="close-zoom" onclick="closeZoom(this, event)">×</div>${media}<p>${item.desc}</p>`;
+                    let deleteBtn = isAuth ? `<button class="btn-delete" onclick="deleteItem('${item.id}', event)">Hapus</button>` : "";
+
+                    card.innerHTML = `<div class="close-zoom" onclick="closeZoom(this, event)">×</div>${media}<p>${item.desc}</p>${deleteBtn}`;
                     container.prepend(card);
                 });
             });
         }
 
         function toggleCard(card, event) {
-            if (event.target.classList.contains('close-zoom')) return;
+            if (event.target.classList.contains('close-zoom') || event.target.classList.contains('btn-delete')) return;
             const overlay = document.getElementById('overlay');
             card.classList.add('active');
             overlay.style.display = 'block';
