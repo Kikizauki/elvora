@@ -29,12 +29,10 @@
 
         #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* Floating Formulas */
         .formula-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
         .formula { position: absolute; color: white; opacity: 0.15; font-family: serif; font-style: italic; animation: slideUp linear infinite; white-space: nowrap; }
         @keyframes slideUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
 
-        /* Notification Toast */
         #toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             padding: 12px 24px; background: #800020;
@@ -44,7 +42,6 @@
             text-transform: uppercase; box-shadow: 0 0 25px rgba(255, 189, 89, 0.3);
         }
 
-        /* Modal Login */
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 999; backdrop-filter: blur(10px); }
         .login-modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -71,7 +68,7 @@
         .hero { 
             text-align: center; z-index: 10; width: 85%; max-width: 380px;
             padding: 35px 20px; 
-            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('foto.jpeg') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('img/foto.jpeg') center/cover no-repeat;
             backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 35px; box-shadow: 0 30px 80px rgba(0, 0, 0, 1);
             position: relative; overflow: hidden;
@@ -112,9 +109,35 @@
             text-transform: uppercase; letter-spacing: 1.5px; text-align: center; transition: 0.3s;
         }
         .btn-gallery { background: #800020; color: white; box-shadow: 0 5px 20px rgba(128, 0, 32, 0.4); }
-        .btn-profile { background: rgba(255,255,255,0.05); color: #ff0000; border: 1px solid rgba(255,189,89,0.3); }
+        .btn-profile { background: rgba(255,255,255,0.05); color: #ffbd59; border: 1px solid rgba(255,189,89,0.3); }
 
-        /* Brightened Admin Controls */
+        .made-by {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px;
+            color: rgba(255,255,255,0.4); z-index: 50; pointer-events: none;
+        }
+        .made-by span {
+    color: #ffbd59;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(255, 189, 89, 0.5);
+    animation: colorFlow 3s linear infinite;
+}
+
+@keyframes colorFlow {
+    0%, 100% { 
+        color: #ffbd59; 
+        text-shadow: 0 0 10px rgba(255, 189, 89, 0.8); 
+    }
+    33% { 
+        color: #fff; 
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); 
+    }
+    66% { 
+        color: #800020; 
+        text-shadow: 0 0 10px rgba(128, 0, 32, 0.8); 
+    }
+}
+
         .admin-status { position: fixed; bottom: 15px; right: 15px; z-index: 100; }
         #loginBtn { 
             background: #ffffff; border: none; color: #000; 
@@ -122,7 +145,7 @@
             font-size: 8px; font-weight: 900; text-transform: uppercase;
             box-shadow: 0 0 15px rgba(255,255,255,0.3); transition: 0.3s;
         }
-        #loginBtn.logged-in { background: #ffbd59; color: #000; box-shadow: 0 0 15px rgba(255,189,89,0.5); }
+        #loginBtn.logged-in { background: #ffbd59; color: #000; }
     </style>
 </head>
 <body>
@@ -142,6 +165,11 @@
             <span class="ticker-item"><i class="fas fa-bolt"></i> Welcome to ELVOR4</span>
             <span class="ticker-item"><i class="fas fa-terminal"></i> Future Minds, Present Actions</span>
             <span class="ticker-item"><i class="fas fa-code"></i> Innovation in every step</span>
+                <span class="ticker-item"><i class="fas fa-rocket"></i> Join us on this journey</span>
+                <span class="ticker-item"><i class="fas fa-user-friends"></i> FARID HANSDHOME AND GOOD BOY</span>
+        </div>
+    
+</div>
         </div>
     </div>
 
@@ -159,6 +187,8 @@
             <a href="profil.html" class="btn btn-profile">Profil</a>
         </div>
     </div>
+
+    <div class="made-by">Made by <span>Zauki & dika😜</span></div>
 
     <div class="admin-status">
         <button id="loginBtn" onclick="toggleLogin(true)">Login</button>
@@ -179,12 +209,12 @@
 
         function checkLogin() {
             const pass = document.getElementById('passCode').value;
-            if(pass === "1234") {
+            if(pass === "elvor4adminaccess") {
                 localStorage.setItem('isAdmin', 'true');
-                showToast("Welcome Admin.");
+                showToast("Welcome.");
                 setTimeout(() => { location.reload(); }, 1200);
             } else {
-                showToast("Invalid Sandi!");
+                showToast("Invalid Access Code!");
             }
         }
 
@@ -199,7 +229,6 @@
             };
         }
 
-        // Floating Formulas System
         const fContainer = document.getElementById('formula-container');
         const formulas = ['E=mc²', 'ΣF=ma', 'πr²', '∫eˣdx', 'H₂O', 'a²+b²=c²', 'F=G(m₁m₂/r²)', 'v=d/t'];
         function createFormula() {
@@ -215,7 +244,6 @@
         }
         setInterval(createFormula, 2000);
 
-        // Canvas Background
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let pts = [];
