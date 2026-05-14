@@ -4,115 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ELVOR4 - Moments Storage</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.min.js"></script>
+    
     <style>
-        :root {
-            --accent: #ffbd59;
-            --primary: #800020;
-            --card-bg: rgba(30, 41, 59, 0.3);
-            --border-glow: rgba(255, 189, 89, 0.2);
-        }
-
+        :root { --accent: #ffbd59; --primary: #800020; --card-bg: rgba(30, 41, 59, 0.3); }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { background: #0a0a0a; font-family: 'Segoe UI', sans-serif; color: white; min-height: 100vh; overflow-x: hidden; }
-
-        /* HEADER & NAV */
-        header {
-            padding: 12px 5% 5px 5%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(128, 0, 32, 0.3);
-        }
-
+        header { padding: 12px 5% 5px 5%; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(128, 0, 32, 0.3); }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-anim { font-size: 1.2rem; font-weight: 900; color: var(--accent); letter-spacing: 1px; }
-        
         .nav-tabs { display: flex; gap: 20px; justify-content: center; }
-        .nav-link { 
-            color: #888; font-size: 11px; font-weight: 700; text-decoration: none; 
-            padding: 5px 10px; transition: 0.3s; border-bottom: 2px solid transparent;
-            text-transform: uppercase;
-        }
+        .nav-link { color: #888; font-size: 11px; font-weight: 700; text-decoration: none; padding: 5px 10px; transition: 0.3s; border-bottom: 2px solid transparent; text-transform: uppercase; }
         .nav-link.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-        .nav-link:active { transform: scale(0.95); }
-
         .btn-add { display: none; background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; cursor: pointer; }
-
-        /* MOMENT SECTION */
-        .moment-section { 
-            margin: 20px 5% 35px 5%; 
-            padding: 15px; 
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255, 189, 89, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .moment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .moment-title { font-size: 0.85rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
         
-        .btn-edit-main { background: #334155; color: #fff; border: none; padding: 5px 12px; border-radius: 5px; font-size: 10px; cursor: pointer; font-weight: bold; }
+        .moment-section { margin: 20px 5% 35px 5%; padding: 15px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255, 189, 89, 0.3); border-radius: 15px; }
+        .moment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .moment-title { font-size: 0.85rem; font-weight: 800; color: var(--accent); text-transform: uppercase; }
+        
+        /* Menu Edit Terpadu */
+        .edit-container { position: relative; }
+        .btn-edit-main { background: #334155; color: #fff; border: none; padding: 6px 15px; border-radius: 5px; font-size: 10px; font-weight: bold; cursor: pointer; }
+        .edit-dropdown { display: none; position: absolute; right: 0; top: 35px; background: #1a1a1a; border: 1px solid var(--accent); border-radius: 8px; z-index: 100; min-width: 120px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .edit-dropdown button { width: 100%; padding: 10px; background: transparent; border: none; color: white; text-align: left; font-size: 10px; font-weight: bold; cursor: pointer; }
+        .edit-dropdown button:first-child { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .edit-dropdown button:active { background: var(--primary); }
 
-        /* SCROLL AREA */
-        .moment-scroll {
-            display: flex; gap: 10px; overflow-x: auto; 
-            padding-bottom: 5px; scroll-snap-type: x mandatory;
-            scrollbar-width: none; scroll-behavior: smooth;
-        }
+        .moment-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .moment-scroll::-webkit-scrollbar { display: none; }
+        
+        .gallery-item { flex: 0 0 120px; aspect-ratio: 1/1; position: relative; background: #111; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .loader-container { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; }
+        .spinner { width: 20px; height: 20px; border: 2px solid rgba(255, 189, 89, 0.1); border-top: 2px solid var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; position: relative; z-index: 2; }
+        .photo-frame img.loaded { opacity: 1; }
+        
+        .edit-overlay { position: absolute; inset: 0; background: rgba(128, 0, 32, 0.7); display: none; align-items: center; justify-content: center; z-index: 5; }
+        .btn-del-small { background: #ff4444; color:white; border:none; width:30px; height:30px; border-radius:50%; font-weight:bold; cursor: pointer;}
+        
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9998; backdrop-filter: blur(4px); }
+        .input-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #161e2e; padding: 20px; border-radius: 15px; width: 85%; max-width: 320px; z-index: 10000; border: 1px solid var(--primary); }
+        input { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 10px; margin-bottom: 12px; border-radius: 5px; outline: none; }
+        .btn-action { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;}
+        
+        /* Modal Konfirmasi Hapus */
+        .confirm-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1a1a; padding: 25px; border-radius: 15px; width: 80%; max-width: 300px; z-index: 10005; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .confirm-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-yes { flex: 1; background: #ff4444; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-no { flex: 1; background: #333; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        .gallery-item {
-            flex: 0 0 120px;
-            aspect-ratio: 1/1; position: relative; scroll-snap-align: center;
-            background: var(--card-bg); border-radius: 10px; padding: 2px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .photo-frame { width: 100%; height: 100%; border-radius: 8px; overflow: hidden; }
-        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* EDIT MODE */
-        .edit-overlay {
-            position: absolute; top:0; left:0; width:100%; height:100%;
-            background: rgba(128, 0, 32, 0.7); display: none;
-            align-items: center; justify-content: center; z-index: 5; border-radius: 8px;
-        }
-        .btn-del-small { background: #ff4444; color:white; border:none; width:30px; height:30px; border-radius:50%; font-weight:bold; cursor:pointer; }
-
-        /* MODALS & POPUPS */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9998; backdrop-filter: blur(4px); }
-        .input-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #161e2e; padding: 20px; border-radius: 15px; width: 85%; max-width: 320px; z-index: 10000; border: 1px solid var(--primary);
-        }
-        input { width: 100%; background: #000; border: 1px solid #333; color: white; padding: 10px; margin-bottom: 12px; border-radius: 5px; font-size: 13px; outline: none; }
-        .btn-action { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        .msg-popup {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #161e2e; padding: 20px; border-radius: 15px; border: 1px solid var(--primary);
-            z-index: 20000; text-align: center; width: 80%; max-width: 280px;
-        }
-
-        .zoom-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 10001; justify-content: center; align-items: center;
-        }
+        .zoom-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10001; justify-content: center; align-items: center; }
         .zoom-img { max-width: 90%; max-height: 80%; border-radius: 8px; border: 1px solid var(--accent); }
     </style>
 </head>
 <body>
-
     <div class="modal-overlay" id="overlay" onclick="closeAll()"></div>
+    <div class="zoom-overlay" id="zoom-overlay" onclick="this.style.display='none'"><img src="" id="zoom-img" class="zoom-img"></div>
 
-    <div class="zoom-overlay" id="zoom-overlay" onclick="this.style.display='none'">
-        <img src="" id="zoom-img" class="zoom-img">
-    </div>
-
-    <div class="msg-popup" id="msg-popup">
-        <h4 id="msg-title" style="color: var(--accent); margin-bottom: 10px;">INFO</h4>
-        <p id="msg-text" style="font-size: 13px; color: #ccc; margin-bottom: 15px;"></p>
-        <div id="msg-btns" style="display: flex; gap: 8px; justify-content: center;"></div>
+    <div class="confirm-modal" id="confirm-modal">
+        <h4 style="margin-bottom: 10px; color: var(--accent);">HAPUS FOTO?</h4>
+        <p style="font-size: 12px; color: #ccc;">Foto akan dihapus permanen.</p>
+        <div class="confirm-btns">
+            <button class="btn-yes" id="confirm-yes-btn">HAPUS</button>
+            <button class="btn-no" onclick="closeAll()">BATAL</button>
+        </div>
     </div>
 
     <header>
@@ -127,115 +85,104 @@
         </nav>
     </header>
 
-    <div id="main-content" style="padding-top: 10px;"></div>
+    <div id="main-content" onclick="hideAllDropdowns()"></div>
 
     <div class="input-modal" id="input-modal">
-        <h4 id="modal-title" style="color:var(--accent); margin-bottom:15px">TAMBAH MOMEN</h4>
-        <input type="text" id="m-name" placeholder="Nama Momen...">
-        <p style="font-size: 10px; color: #888; margin-bottom: 5px;">Pilih banyak foto:</p>
+        <h4 style="color:var(--accent); margin-bottom:15px">TAMBAH FOTO</h4>
+        <input type="text" id="m-name" placeholder="Nama Momen..." readonly style="opacity: 0.6">
         <input type="file" id="m-photo" accept="image/*" multiple>
         <button onclick="saveMoment()" id="btn-submit" class="btn-action">SIMPAN</button>
         <p onclick="closeAll()" style="text-align:center; color:#666; font-size: 11px; margin-top: 15px; cursor:pointer;">BATAL</p>
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAQqcXjVEa0K2oNJXcqTl9lCh8lT1ufBwY",
-            authDomain: "elvor4.firebaseapp.com",
-            databaseURL: "https://elvor4-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "elvor4",
-            storageBucket: "elvor4.firebasestorage.app",
-            messagingSenderId: "722842875129",
-            appId: "1:722842875129:web:3735e1f5f2ed03bfd59e28"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const _URL = "https://xgltgznrlgrkrwpqrfum.supabase.co";
+        const _KEY = "sb_publishable_UBydTj18DDPx2hj6omtaaQ_WZlPJEAk";
+        const supabaseClient = supabase.createClient(_URL, _KEY);
 
         const isAdmin = localStorage.getItem('isAdmin') === 'true';
         if(isAdmin) document.getElementById('admin-add-btn').style.display = 'block';
 
-        let autoSlideIntervals = {};
+        let deleteUrl = "";
 
-        function showMsg(title, text, action = null) {
-            document.getElementById('msg-title').innerText = title;
-            document.getElementById('msg-text').innerText = text;
-            const btnArea = document.getElementById('msg-btns');
-            btnArea.innerHTML = action ? 
-                `<button onclick="${action}" style="background:#ff4444; color:white; border:none; padding:8px 15px; border-radius:5px; font-size:11px; cursor:pointer;">HAPUS</button>
-                 <button onclick="closeMsg()" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:5px; font-size:11px; cursor:pointer;">BATAL</button>` :
-                `<button onclick="closeMsg()" class="btn-action" style="padding:8px 20px;">OK</button>`;
-            document.getElementById('msg-popup').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+        function closeAll() {
+            document.getElementById('input-modal').style.display='none';
+            document.getElementById('confirm-modal').style.display='none';
+            document.getElementById('overlay').style.display='none';
+            hideAllDropdowns();
         }
 
-        function closeMsg() { document.getElementById('msg-popup').style.display='none'; document.getElementById('overlay').style.display='none'; }
-        function toggleModal(s) { document.getElementById('input-modal').style.display=s?'block':'none'; document.getElementById('overlay').style.display=s?'block':'none'; }
-        function closeAll() { toggleModal(false); closeMsg(); }
-
-        function openCreateModal() {
-            document.getElementById('modal-title').innerText = "BUAT MOMEN BARU";
-            document.getElementById('m-name').value = "";
-            document.getElementById('m-name').disabled = false;
-            toggleModal(true);
+        function hideAllDropdowns() {
+            document.querySelectorAll('.edit-dropdown').forEach(d => d.style.display = 'none');
         }
 
-        function openAddMore(name) {
-            document.getElementById('modal-title').innerText = "TAMBAH KE: " + name;
-            document.getElementById('m-name').value = name;
-            document.getElementById('m-name').disabled = true;
-            toggleModal(true);
+        function toggleMenu(e, name) {
+            e.stopPropagation();
+            hideAllDropdowns();
+            const dropdown = document.getElementById('drop-' + name.replace(/\s/g, ''));
+            dropdown.style.display = 'block';
+        }
+
+        function openCreateModal() { 
+            document.getElementById('m-name').value = ""; 
+            document.getElementById('m-name').readOnly = false; 
+            document.getElementById('m-name').style.opacity = "1";
+            document.getElementById('input-modal').style.display='block';
+            document.getElementById('overlay').style.display='block';
+        }
+
+        function openAddMore(name) { 
+            document.getElementById('m-name').value = name; 
+            document.getElementById('m-name').readOnly = true; 
+            document.getElementById('m-name').style.opacity = "0.6";
+            document.getElementById('input-modal').style.display='block';
+            document.getElementById('overlay').style.display='block';
+            hideAllDropdowns();
         }
 
         async function saveMoment() {
-            const name = document.getElementById('m-name').value;
+            const groupName = document.getElementById('m-name').value;
             const files = document.getElementById('m-photo').files;
-            if(!name || files.length === 0) return showMsg("ERROR", "Lengkapi Data!");
+            if(!groupName || files.length === 0) return;
             const btn = document.getElementById('btn-submit');
-            btn.innerText = "UPLOADING..."; btn.disabled = true;
+            btn.innerText = "PROSES..."; btn.disabled = true;
 
             for (let file of files) {
-                const reader = new FileReader();
-                await new Promise(r => {
-                    reader.onload = (e) => {
-                        const key = db.ref('moments').push().key;
-                        db.ref('moments/'+key).set({id:key, group:name, image:e.target.result}).then(r);
-                    };
-                    reader.readAsDataURL(file);
-                });
+                try {
+                    const compressed = await imageCompression(file, { maxSizeMB: 0.2, maxWidthOrHeight: 1000 });
+                    const fileName = Date.now() + "_" + Math.random().toString(36).substring(7) + ".jpg";
+                    await supabaseClient.storage.from('galeri-assets').upload(fileName, compressed);
+                    const { data: { publicUrl } } = supabaseClient.storage.from('galeri-assets').getPublicUrl(fileName);
+                    await supabaseClient.from('moments').insert([{ "group": groupName, "image_url": publicUrl }]);
+                } catch (e) { console.error(e); }
             }
             location.reload();
         }
 
-        function toggleEditMode(groupName) {
-            const overlays = document.querySelectorAll(`.edit-overlay-${groupName.replace(/\s/g, '')}`);
-            overlays.forEach(el => el.style.display = (el.style.display === 'flex' ? 'none' : 'flex'));
-        }
-
-        function deleteItem(id) {
-            db.ref('moments/'+id).remove().then(() => location.reload());
-        }
-
-        function loadMoments() {
-            db.ref('moments').on('value', (snap) => {
+        async function loadMoments() {
+            try {
+                const { data } = await supabaseClient.from('moments').select('"group", image_url');
                 const main = document.getElementById('main-content');
                 main.innerHTML = "";
                 const groups = {};
-                snap.forEach(c => {
-                    const d = c.val();
-                    if(!groups[d.group]) groups[d.group] = [];
-                    groups[d.group].push(d);
+                data.forEach(d => { 
+                    if(!groups[d.group]) groups[d.group] = []; 
+                    groups[d.group].push(d); 
                 });
 
                 for(let title in groups) {
-                    const safeName = title.replace(/\s/g, '');
+                    const safe = title.replace(/\s/g, '');
                     let itemsHtml = "";
                     groups[title].forEach(item => {
                         itemsHtml += `
-                        <div class="gallery-item" onclick="viewPhoto('${item.image}')">
-                            <div class="edit-overlay edit-overlay-${safeName}">
-                                <button class="btn-del-small" onclick="event.stopPropagation(); showMsg('HAPUS?','Hapus foto ini?','deleteItem(\\'${item.id}\\')')">✕</button>
+                        <div class="gallery-item" onclick="viewPhoto('${item.image_url}')">
+                            <div class="edit-overlay edit-overlay-${safe}">
+                                <button class="btn-del-small" onclick="event.stopPropagation(); askDelete('${item.image_url}')">✕</button>
                             </div>
-                            <div class="photo-frame"><img src="${item.image}"></div>
+                            <div class="photo-frame">
+                                <div class="loader-container"><div class="spinner"></div></div>
+                                <img src="${item.image_url}" onload="this.classList.add('loaded'); this.parentElement.querySelector('.loader-container').style.display='none'">
+                            </div>
                         </div>`;
                     });
 
@@ -243,39 +190,51 @@
                     <div class="moment-section">
                         <div class="moment-header">
                             <h2 class="moment-title">📍 ${title}</h2>
-                            ${isAdmin ? `<div>
-                                <button class="btn-edit-main" onclick="openAddMore('${title}')" style="background:var(--primary); margin-right:5px;">+ FOTO</button>
-                                <button class="btn-edit-main" onclick="toggleEditMode('${title}')">EDIT</button>
+                            ${isAdmin ? `
+                            <div class="edit-container">
+                                <button class="btn-edit-main" onclick="toggleMenu(event, '${title}')">EDIT</button>
+                                <div class="edit-dropdown" id="drop-${safe}">
+                                    <button onclick="openAddMore('${title}')">+ TAMBAH FOTO</button>
+                                    <button onclick="toggleDeleteMode('${title}')" style="color:#ff4444">✕ HAPUS FOTO</button>
+                                </div>
                             </div>` : ''}
                         </div>
-                        <div class="moment-scroll" id="scroll-${safeName}">
-                            ${itemsHtml}
-                        </div>
+                        <div class="moment-scroll">${itemsHtml}</div>
                     </div>`;
-
-                    startAutoSlide(safeName);
                 }
-            });
+            } catch (e) { console.error(e); }
         }
 
-        function startAutoSlide(id) {
-            if(autoSlideIntervals[id]) clearInterval(autoSlideIntervals[id]);
-            const el = document.getElementById('scroll-' + id);
-            autoSlideIntervals[id] = setInterval(() => {
-                if (el.scrollLeft + el.offsetWidth >= el.scrollWidth - 10) {
-                    el.scrollTo({ left: 0, behavior: 'smooth' });
-                } else {
-                    el.scrollBy({ left: 130, behavior: 'smooth' });
-                }
-            }, 2000);
+        function toggleDeleteMode(name) {
+            const overlays = document.querySelectorAll('.edit-overlay-' + name.replace(/\s/g, ''));
+            overlays.forEach(o => o.style.display = o.style.display === 'flex' ? 'none' : 'flex');
+            hideAllDropdowns();
+        }
+
+        function askDelete(url) {
+            deleteUrl = url;
+            document.getElementById('confirm-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        document.getElementById('confirm-yes-btn').onclick = async function() {
+            this.innerText = "...";
+            try {
+                const fileName = deleteUrl.split('/').pop();
+                await supabaseClient.storage.from('galeri-assets').remove([fileName]);
+                await supabaseClient.from('moments').delete().eq('image_url', deleteUrl);
+                location.reload();
+            } catch(e) { console.error(e); closeAll(); }
         }
 
         function viewPhoto(src) {
+            if(Array.from(document.querySelectorAll('.edit-overlay')).some(o => o.style.display === 'flex')) return;
             document.getElementById('zoom-img').src = src;
             document.getElementById('zoom-overlay').style.display = 'flex';
         }
 
         window.onload = loadMoments;
+        window.onclick = hideAllDropdowns;
     </script>
 </body>
 </html>
