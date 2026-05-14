@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELVOR4 - Official Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        
+        body {
+            height: 100vh;
+            background: #050505;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 223, 231, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(83, 72, 72, 0.9) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(123, 120, 122, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(255, 255, 255, 0.15) 0px, transparent 50%);
+            animation: bgMesh 15s ease infinite;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; color: white; position: relative;
+        }
+
+        @keyframes bgMesh {
+            0%, 100% { background-size: 100% 100%; }
+            50% { background-size: 130% 130%; }
+        }
+
+        #particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+        /* Floating Formulas */
+        .formula-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: hidden; }
+        .formula { position: absolute; color: white; opacity: 0.15; font-family: serif; font-style: italic; animation: slideUp linear infinite; white-space: nowrap; }
+        @keyframes slideUp { from { transform: translateY(110vh); } to { transform: translateY(-20vh); } }
+
+        /* Notification Toast */
+        #toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background: #800020;
+            border: 2px solid #ffbd59; border-radius: 12px; font-size: 11px;
+            font-weight: 900; color: white; z-index: 2000;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase; box-shadow: 0 0 25px rgba(255, 189, 89, 0.3);
+        }
+
+        /* Modal Login */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 999; backdrop-filter: blur(10px); }
+        .login-modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #0f0f0f; padding: 30px; border-radius: 25px; border: 2px solid #800020;
+            z-index: 1000; width: 280px; text-align: center; box-shadow: 0 0 40px #80002055;
+        }
+        .login-modal input {
+            width: 100%; padding: 12px; margin: 15px 0; background: #000; border: 1px solid #ffbd59;
+            color: white; border-radius: 10px; text-align: center; outline: none; font-size: 13px;
+        }
+
+        .news-ticker {
+            position: fixed; top: 10px; left: 0; width: 100%; height: 30px;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
+            z-index: 60; display: flex; align-items: center; overflow: hidden;
+            border-top: 1px solid rgba(255, 189, 89, 0.2); border-bottom: 1px solid rgba(255, 189, 89, 0.2);
+        }
+
+        .ticker-wrapper { white-space: nowrap; display: inline-block; animation: tickerFlow 35s linear infinite; }
+        .ticker-item { display: inline-block; padding-right: 100px; font-size: 10px; font-weight: 800; color: #ffbd59; text-transform: uppercase; letter-spacing: 2px; }
+
+        @keyframes tickerFlow { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        .hero { 
+            text-align: center; z-index: 10; width: 85%; max-width: 380px;
+            padding: 35px 20px; 
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('img/foto.jpeg') center/cover no-repeat;
+            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 35px; box-shadow: 0 30px 80px rgba(0, 0, 0, 1);
+            position: relative; overflow: hidden;
+        }
+        
+        video {
+            width: 95px; height: 95px; border-radius: 50%; object-fit: cover; 
+            border: 2px solid #800020; box-shadow: 0 0 25px rgba(128, 0, 32, 0.6);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2.5rem; letter-spacing: 6px; font-weight: 900;
+            background: linear-gradient(to right, #800020, #ffbd59, #fff, #ffbd59, #800020);
+            background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            animation: gradientMove 3s linear infinite, glitch 2.5s infinite;
+            margin-bottom: 8px;
+        }
+
+        @keyframes glitch { 0%, 100% { text-shadow: 1px 1px #800020; } 50% { text-shadow: -1px -1px #ffbd59; } }
+        @keyframes gradientMove { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        
+        .social-container { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .soc-link {
+            text-decoration: none; color: #fff; font-size: 9px; padding: 8px 18px; border-radius: 50px; 
+            display: flex; align-items: center; gap: 6px; font-weight: 900; text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.2); transition: 0.3s;
+        }
+        .soc-link:hover { transform: scale(1.1); filter: brightness(1.2); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
+
+        .ig-link { background: linear-gradient(45deg, #405de6, #c13584, #fd1d1d); }
+        .tt-link { background: #000; box-shadow: 1px 1px 0px #ff0050, -1px -1px 0px #00f2ea; }
+
+        .menu { display: flex; gap: 8px; justify-content: center; flex-direction: column; align-items: center; }
+        .btn { 
+            width: 100%; max-width: 160px; padding: 12px; border-radius: 50px; 
+            text-decoration: none; font-weight: 900; font-size: 9px; 
+            text-transform: uppercase; letter-spacing: 1.5px; text-align: center; transition: 0.3s;
+        }
+        .btn-gallery { background: #800020; color: white; box-shadow: 0 5px 20px rgba(128, 0, 32, 0.4); }
+        .btn-profile { background: rgba(255,255,255,0.05); color: #ff0000; border: 1px solid rgba(255,189,89,0.3); }
+
+        /* Brightened Admin Controls */
+        .admin-status { position: fixed; bottom: 15px; right: 15px; z-index: 100; }
+        #loginBtn { 
+            background: #ffffff; border: none; color: #000; 
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; 
+            font-size: 8px; font-weight: 900; text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3); transition: 0.3s;
+        }
+        #loginBtn.logged-in { background: #ffbd59; color: #000; box-shadow: 0 0 15px rgba(255,189,89,0.5); }
+    </style>
+</head>
+<body>
+    <div id="toast">SYSTEM MESSAGE</div>
+    <canvas id="particles"></canvas>
+    <div class="formula-container" id="formula-container"></div>
+
+    <div class="overlay" id="overlay" onclick="toggleLogin(false)"></div>
+    <div class="login-modal" id="loginModal">
+        <h3 style="color: #ffbd59; font-size: 14px; letter-spacing: 3px;">SYSTEM ACCESS</h3>
+        <input type="password" id="passCode" placeholder="ENTER ACCESS CODE">
+        <button onclick="checkLogin()" style="width:100%; padding:12px; background:#800020; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:900; font-size: 11px; letter-spacing: 2px;">AUTHORIZE</button>
+    </div>
+
+    <div class="news-ticker">
+        <div class="ticker-wrapper">
+            <span class="ticker-item"><i class="fas fa-bolt"></i> Welcome to ELVOR4</span>
+            <span class="ticker-item"><i class="fas fa-terminal"></i> Future Minds, Present Actions</span>
+            <span class="ticker-item"><i class="fas fa-code"></i> Innovation in every step</span>
+        </div>
+    </div>
+
+    <div class="hero">
+        <video autoplay muted loop playsinline><source src="logo.mp4" type="video/mp4"></video>
+        <h1>ELVOR4</h1>
+        
+        <div class="social-container">
+            <a href="https://instagram.com/elvor4.ofc" target="_blank" class="soc-link ig-link"><i class="fab fa-instagram"></i> IG</a>
+            <a href="https://www.tiktok.com/@sebelasss_empat" target="_blank" class="soc-link tt-link"><i class="fab fa-tiktok"></i> TT</a>
+        </div>
+
+        <div class="menu">
+            <a href="galeri.html" class="btn btn-gallery">Galeri</a>
+            <a href="profil.html" class="btn btn-profile">Profil</a>
+        </div>
+    </div>
+
+    <div class="admin-status">
+        <button id="loginBtn" onclick="toggleLogin(true)">Login</button>
+    </div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.top = '60px';
+            setTimeout(() => { toast.style.top = '-100px'; }, 3000);
+        }
+
+        function toggleLogin(show) {
+            document.getElementById('loginModal').style.display = show ? 'block' : 'none';
+            document.getElementById('overlay').style.display = show ? 'block' : 'none';
+        }
+
+        function checkLogin() {
+            const pass = document.getElementById('passCode').value;
+            if(pass === "1234") {
+                localStorage.setItem('isAdmin', 'true');
+                showToast("Welcome Admin.");
+                setTimeout(() => { location.reload(); }, 1200);
+            } else {
+                showToast("Invalid Sandi!");
+            }
+        }
+
+        const btn = document.getElementById('loginBtn');
+        if(localStorage.getItem('isAdmin') === 'true') {
+            btn.innerText = "Logout";
+            btn.classList.add('logged-in');
+            btn.onclick = () => { 
+                localStorage.removeItem('isAdmin'); 
+                showToast("Logging out...");
+                setTimeout(() => { location.reload(); }, 1200);
+            };
+        }
+
+        // Floating Formulas System
+        const fContainer = document.getElementById('formula-container');
+        const formulas = ['E=mc²', 'ΣF=ma', 'πr²', '∫eˣdx', 'H₂O', 'a²+b²=c²', 'F=G(m₁m₂/r²)', 'v=d/t'];
+        function createFormula() {
+            const el = document.createElement('div');
+            el.className = 'formula';
+            el.innerText = formulas[Math.floor(Math.random() * formulas.length)];
+            el.style.left = Math.random() * 90 + 'vw';
+            el.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            const dur = Math.random() * 10 + 15;
+            el.style.animationDuration = dur + 's';
+            fContainer.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000);
+        }
+        setInterval(createFormula, 2000);
+
+        // Canvas Background
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let pts = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.onresize = resize; resize();
+
+        class Particle {
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.speedX = Math.random() * 0.2 - 0.1;
+                this.speedY = Math.random() * 0.2 - 0.1;
+                this.opacity = Math.random() * 0.3;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) this.init();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        for (let i = 0; i < 40; i++) pts.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pts.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
